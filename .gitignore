@@ -1,0 +1,24 @@
+# Environment
+.env
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Generated files (created by agent at runtime)
+trip_log.log
+itinerary.md
+*_itinerary.md
+*_budget.md
+intelligence_audit.log
+threat_matrix.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

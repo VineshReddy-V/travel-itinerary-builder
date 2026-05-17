@@ -1,0 +1,4 @@
+fastmcp[apps]
+prefab-ui
+tavily-python
+python-dotenv
