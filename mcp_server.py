@@ -164,12 +164,27 @@ def generate_trip_dashboard(python_code: str) -> PrefabApp:
     ```
 
     Available components you can import from prefab_ui.components:
-        Layout:    Container, Column, Row, Grid, GridItem, Separator
+        Layout:    Container, Column, Row, Grid(columns=N), GridItem, Separator
         Cards:     Card, CardHeader, CardTitle, CardContent
-        Text:      Heading, Text, Markdown, Code, Muted
-        Feedback:  Badge, Alert, AlertTitle, AlertDescription
-        Data:      Table, TableHeader, TableBody, TableRow, TableHead, TableCell
-        Nav:       Tabs, Tab, Accordion, AccordionItem, Carousel
+        Text:      Heading(content, level=N), Text(*args), Markdown(content), Code(content), Muted(content)
+        Feedback:  Badge(label, variant=...), Alert(variant=...), AlertTitle(content), AlertDescription(content)
+        Data:      Table, TableHeader, TableBody, TableRow, TableHead(content), TableCell(content)
+        Nav:       Tabs, Tab(title=...), Accordion, AccordionItem(title=...), Carousel
+
+    **CRITICAL API RULES — read carefully to avoid errors:**
+        - Container components (Card, CardHeader, CardContent, Row, Column, Table,
+          TableHeader, TableBody, TableRow, Tabs, Accordion, Alert) accept ONLY
+          **kwargs — NO positional arguments. Use them as context managers:
+              with CardHeader():
+                  CardTitle("My Title")
+          NEVER do: CardHeader(CardTitle("My Title"))  # THIS WILL CRASH
+        - Leaf/text components accept a positional string:
+              Heading("text"), Text("text"), Badge("label"), Code("text"),
+              Muted("text"), CardTitle("text"), AlertTitle("text"),
+              AlertDescription("text"), TableHead("text"), TableCell("text")
+        - Tab uses `title=` NOT `label=`:  Tab(title="Day 1")
+        - AccordionItem uses `title=`:  AccordionItem(title="Details")
+        - Grid uses `columns=`:  Grid(columns=3)
 
     Tips for great travel dashboards:
         - Use Tabs for day-by-day itineraries (Day 1, Day 2, ...)
@@ -271,6 +286,16 @@ You are the lead UI/UX designer. Create a beautiful, travel-themed dashboard tha
 **VALID COMPONENTS (do NOT hallucinate others):**
 `Container`, `Column`, `Row`, `Grid`, `GridItem`, `Separator`, `Card`, `CardHeader`, `CardTitle`, `CardContent`, `Heading`, `Text`, `Markdown`, `Badge`, `Alert`, `AlertTitle`, `AlertDescription`, `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`, `Tabs`, `Tab`, `Accordion`, `AccordionItem`, `Carousel`, `Code`, `Muted`.
 
+**CRITICAL API RULES — FOLLOW EXACTLY OR THE CODE WILL CRASH:**
+- Container components (Card, CardHeader, CardContent, CardFooter, Row, Column,
+  Container, Table, TableHeader, TableBody, TableRow, Tabs, Accordion, Alert,
+  Grid, GridItem) accept ONLY **kwargs. They take NO positional arguments.
+  Always use them as context managers with `with ... :`.
+  CORRECT:   `with CardHeader(): CardTitle("Title")`
+  WRONG:     `CardHeader(CardTitle("Title"))`  ← CRASHES with "takes 1 positional argument but 2 were given"
+- Tab uses `title=` parameter: `Tab(title="Day 1")`, NOT `Tab(label="Day 1")`.
+- AccordionItem uses `title=`: `AccordionItem(title="Details")`.
+- Grid uses `columns=`: `Grid(columns=3)`.
 - IMPORTANT: "Divider" does NOT exist. Use "Separator" instead.
 - Prove that your background tasks succeeded by embedding a `Code` block containing the final line of your `trip_log.log`.
 
