@@ -103,10 +103,17 @@ def manage_itinerary(action: str, filepath: str, content: str = "") -> str:
     Args:
         action: The operation to perform — 'create', 'read', 'update', or 'delete'.
         filepath: The path to the file (e.g., 'tokyo_itinerary.md', 'trip_log.log').
+                  Relative paths are resolved to the project directory automatically.
         content: The content to write or append (used for 'create' and 'update' only).
     Returns:
         A string indicating the result of the operation.
     """
+    # Always resolve relative paths to the project directory (next to mcp_server.py)
+    # This fixes the "Read-only file system" error when Claude Desktop uses a sandboxed cwd.
+    PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+    if not os.path.isabs(filepath):
+        filepath = os.path.join(PROJECT_DIR, filepath)
+
     try:
         if action == "read":
             if not os.path.exists(filepath):
